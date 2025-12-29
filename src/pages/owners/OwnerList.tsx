@@ -19,30 +19,56 @@ import {
   DialogActions,
   CircularProgress,
   Alert,
-  Chip,
+  TextField,
+  InputAdornment,
+  Grid, 
 } from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   Search as SearchIcon,
+  Clear as ClearIcon,
+  Visibility as ViewIcon,
 } from '@mui/icons-material';
 import { ownersApi } from '../../api/owners';
-import type { Owner } from '../../types/owner';
+import type { Owner, OwnerSearchDto } from '../../types/owner';
 
 export default function OwnerList() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedOwner, setSelectedOwner] = useState<Owner | null>(null);
-
-  // Fetch owners
-  const { data: owners, isLoading, error } = useQuery({
-    queryKey: ['owners'],
-    queryFn: ownersApi.getAll,
+  
+  // Search states
+  const [searchCriteria, setSearchCriteria] = useState<OwnerSearchDto>({
+    firstName: '',
+    lastName: '',
+    tcKimlikNo: '',
+    phoneNumber: '',
+  });
+  
+  // Active search (only updated when Search button is clicked)
+  const [activeSearch, setActiveSearch] = useState<OwnerSearchDto>({
+    firstName: '',
+    lastName: '',
+    tcKimlikNo: '',
+    phoneNumber: '',
   });
 
-  // Delete mutation
+  // Fetch owners with search
+  const { data: owners, isLoading, error, refetch } = useQuery({
+    queryKey: ['owners', activeSearch],
+    queryFn: async () => {
+      // If any search field is filled, use search endpoint
+      if (Object.values(activeSearch).some(val => val && val.trim() !== '')) {
+        return await ownersApi.search(activeSearch);
+      }
+      // Otherwise get all
+      return await ownersApi.getAll();
+    },
+  });
+
   const deleteMutation = useMutation({
     mutationFn: ownersApi.delete,
     onSuccess: () => {
@@ -60,6 +86,27 @@ export default function OwnerList() {
   const confirmDelete = () => {
     if (selectedOwner) {
       deleteMutation.mutate(selectedOwner.id);
+    }
+  };
+
+  const handleSearch = () => {
+    setActiveSearch({ ...searchCriteria });
+  };
+
+  const handleClearSearch = () => {
+    const emptySearch = {
+      firstName: '',
+      lastName: '',
+      tcKimlikNo: '',
+      phoneNumber: '',
+    };
+    setSearchCriteria(emptySearch);
+    setActiveSearch(emptySearch);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
     }
   };
 
@@ -82,9 +129,7 @@ export default function OwnerList() {
   return (
     <Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4">
-          Owners
-        </Typography>
+        <Typography variant="h4">Owners</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -94,6 +139,101 @@ export default function OwnerList() {
         </Button>
       </Box>
 
+      {/* Search Filters */}
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Search Filters
+        </Typography>
+        <Grid container spacing={2}>
+          {/* First Name */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <TextField
+              fullWidth
+              label="First Name"
+              value={searchCriteria.firstName}
+              onChange={(e) => setSearchCriteria(prev => ({ ...prev, firstName: e.target.value }))}
+              onKeyPress={handleKeyPress}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          {/* Last Name */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <TextField
+              fullWidth
+              label="Last Name"
+              value={searchCriteria.lastName}
+              onChange={(e) => setSearchCriteria(prev => ({ ...prev, lastName: e.target.value }))}
+              onKeyPress={handleKeyPress}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          {/* TC Kimlik */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <TextField
+              fullWidth
+              label="TC Kimlik No"
+              value={searchCriteria.tcKimlikNo}
+              onChange={(e) => setSearchCriteria(prev => ({ ...prev, tcKimlikNo: e.target.value }))}
+              onKeyPress={handleKeyPress}
+              inputProps={{ maxLength: 11 }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          {/* Phone Number */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <TextField
+              fullWidth
+              label="Phone Number"
+              value={searchCriteria.phoneNumber}
+              onChange={(e) => setSearchCriteria(prev => ({ ...prev, phoneNumber: e.target.value }))}
+              onKeyPress={handleKeyPress}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+        </Grid>
+        <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+          <Button
+            variant="contained"
+            startIcon={<SearchIcon />}
+            onClick={handleSearch}
+          >
+            Search
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<ClearIcon />}
+            onClick={handleClearSearch}
+          >
+            Clear
+          </Button>
+        </Box>
+      </Paper>
+
+      {/* Results */}
       <Paper>
         <TableContainer>
           <Table>
@@ -113,7 +253,7 @@ export default function OwnerList() {
                 <TableRow>
                   <TableCell colSpan={7} align="center">
                     <Typography variant="body2" color="text.secondary" py={4}>
-                      No owners found. Click "Add Owner" to create one.
+                      No owners found. {Object.values(activeSearch).some(v => v) ? 'Try different search criteria.' : 'Click "Add Owner" to create one.'}
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -132,14 +272,23 @@ export default function OwnerList() {
                     </TableCell>
                     <TableCell align="right">
                       <IconButton
+                        color="info"
+                        onClick={() => navigate(`/owners/${owner.id}`)}
+                        size="small"
+                      >
+                        <ViewIcon />
+                      </IconButton>
+                      <IconButton
                         color="primary"
                         onClick={() => navigate(`/owners/edit/${owner.id}`)}
+                        size="small"
                       >
                         <EditIcon />
                       </IconButton>
                       <IconButton
                         color="error"
                         onClick={() => handleDelete(owner)}
+                        size="small"
                       >
                         <DeleteIcon />
                       </IconButton>
