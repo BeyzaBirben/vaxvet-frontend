@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink, useLocation } from 'react-router-dom';
 import {
   Box,
   Card,
@@ -9,18 +9,23 @@ import {
   Typography,
   Alert,
   CircularProgress,
+  Link,
 } from '@mui/material';
 import { authApi } from '../api/auth';
 import { useAuthStore } from '../store/authStore';
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuthStore();
   
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Check if there's a success message from registration
+  const successMessage = (location.state as any)?.message;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +76,12 @@ export default function Login() {
             Veterinary Management System
           </Typography>
 
+          {successMessage && (
+            <Alert severity="success" sx={{ mb: 2 }}>
+              {successMessage}
+            </Alert>
+          )}
+
           {error && (
             <Alert severity="error" sx={{ mb: 2 }}>
               {error}
@@ -115,6 +126,24 @@ export default function Login() {
           <Typography variant="caption" display="block" align="center" mt={2} color="text.secondary">
             Default: admin / Admin123!
           </Typography>
+
+          <Box sx={{ mt: 2, textAlign: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
+              Don't have an account?{' '}
+              <Link
+                component={RouterLink}
+                to="/register"
+                underline="hover"
+                sx={{ 
+                  color: 'primary.main',
+                  fontWeight: 500,
+                  cursor: 'pointer'
+                }}
+              >
+                Register here
+              </Link>
+            </Typography>
+          </Box>
         </CardContent>
       </Card>
     </Box>

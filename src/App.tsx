@@ -3,16 +3,44 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, createTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 
+// Auth & Layout
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Layout from './components/layout/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Owners
 import OwnerList from './pages/owners/OwnerList';
 import OwnerCreate from './pages/owners/OwnerCreate';
 import OwnerEdit from './pages/owners/OwnerEdit';
-import Layout from './components/layout/Layout';
-import ProtectedRoute from './components/ProtectedRoute';
+import OwnerDetail from './pages/owners/OwnerDetail';
+
+// Pets
 import PetList from './pages/pets/PetList';
 import PetCreate from './pages/pets/PetCreate';
 import PetEdit from './pages/pets/PetEdit';
+import PetDetail from './pages/pets/PetDetail';
+
+// Vaccines
+import VaccineList from './pages/vaccines/VaccineList';
+import VaccineCreate from './pages/vaccines/VaccineCreate';
+import VaccineEdit from './pages/vaccines/VaccineEdit';
+
+// Vaccine Stocks
+import VaccineStockList from './pages/vaccineStocks/VaccineStockList';
+import VaccineStockCreate from './pages/vaccineStocks/VaccineStockCreate';
+import VaccineStockEdit from './pages/vaccineStocks/VaccineStockEdit';
+
+// Vaccine Records
+import VaccineRecordList from './pages/vaccineRecords/VaccineRecordList';
+import VaccineRecordCreate from './pages/vaccineRecords/VaccineRecordCreate';
+import VaccineRecordEdit from './pages/vaccineRecords/VaccineRecordEdit';
+
+// Codes
+import CodesList from './pages/codes/CodesList';
+import CodesCreate from './pages/codes/CodesCreate';
+import CodesEdit from './pages/codes/CodesEdit';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,6 +70,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             
             <Route
               path="/*"
@@ -51,13 +80,42 @@ function App() {
                 </ProtectedRoute>
               }
             >
+              {/* Dashboard */}
               <Route path="dashboard" element={<Dashboard />} />
+              
+              {/* Owners */}
               <Route path="owners" element={<OwnerList />} />
               <Route path="owners/create" element={<OwnerCreate />} />
               <Route path="owners/edit/:id" element={<OwnerEdit />} />
+              <Route path="owners/:id" element={<OwnerDetail />} />
+              
+              {/* Pets */}
               <Route path="pets" element={<PetList />} />
-               <Route path="pets/create" element={<PetCreate />} />
+              <Route path="pets/create" element={<PetCreate />} />
               <Route path="pets/edit/:id" element={<PetEdit />} />
+              <Route path="pets/:id" element={<PetDetail />} />
+              
+              {/* Vaccines */}
+              <Route path="vaccines" element={<VaccineList />} />
+              <Route path="vaccines/create" element={<VaccineCreate />} />
+              <Route path="vaccines/edit/:id" element={<VaccineEdit />} />
+              
+              {/* Vaccine Stocks */}
+              <Route path="vaccine-stocks" element={<VaccineStockList />} />
+              <Route path="vaccine-stocks/create" element={<VaccineStockCreate />} />
+              <Route path="vaccine-stocks/edit/:id" element={<VaccineStockEdit />} />
+              
+              {/* Vaccine Records */}
+              <Route path="vaccine-records" element={<VaccineRecordList />} />
+              <Route path="vaccine-records/create" element={<VaccineRecordCreate />} />
+              <Route path="vaccine-records/edit/:id" element={<VaccineRecordEdit />} />
+              
+              {/* Codes */}
+              <Route path="codes" element={<CodesList />} />
+              <Route path="codes/create" element={<CodesCreate />} />
+              <Route path="codes/edit/:id" element={<CodesEdit />} />
+              
+              {/* Default redirect */}
               <Route path="" element={<Navigate to="/dashboard" replace />} />
             </Route>
           </Routes>
@@ -66,7 +124,5 @@ function App() {
     </QueryClientProvider>
   );
 }
-
-
 
 export default App;

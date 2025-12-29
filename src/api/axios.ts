@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
   },
 });
 
-// Request interceptor - Add token to headers
+
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -22,12 +22,11 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response interceptor - Handle errors
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Unauthorized - redirect to login
+
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
