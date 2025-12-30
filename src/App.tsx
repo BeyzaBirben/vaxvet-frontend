@@ -37,6 +37,13 @@ import VaccineRecordList from './pages/vaccineRecords/VaccineRecordList';
 import VaccineRecordCreate from './pages/vaccineRecords/VaccineRecordCreate';
 import VaccineRecordEdit from './pages/vaccineRecords/VaccineRecordEdit';
 
+// Veterinarians
+import VeterinariansList from './pages/veterinarians/veterinariansList';
+import VeterinarianDetail from './pages/veterinarians/veterinarianDetail';
+import VeterinarianEdit from "./pages/veterinarians/veterinarianEdit";
+
+
+
 // Codes
 import CodesList from './pages/codes/CodesList';
 import CodesCreate from './pages/codes/CodesCreate';
@@ -71,7 +78,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            
+
             <Route
               path="/*"
               element={
@@ -82,39 +89,46 @@ function App() {
             >
               {/* Dashboard */}
               <Route path="dashboard" element={<Dashboard />} />
-              
+
               {/* Owners */}
               <Route path="owners" element={<OwnerList />} />
               <Route path="owners/create" element={<OwnerCreate />} />
               <Route path="owners/edit/:id" element={<OwnerEdit />} />
               <Route path="owners/:id" element={<OwnerDetail />} />
-              
+
               {/* Pets */}
               <Route path="pets" element={<PetList />} />
               <Route path="pets/create" element={<PetCreate />} />
               <Route path="pets/edit/:id" element={<PetEdit />} />
               <Route path="pets/:id" element={<PetDetail />} />
-              
+
               {/* Vaccines */}
               <Route path="vaccines" element={<VaccineList />} />
               <Route path="vaccines/create" element={<VaccineCreate />} />
               <Route path="vaccines/edit/:id" element={<VaccineEdit />} />
-              
+
               {/* Vaccine Stocks */}
               <Route path="vaccine-stocks" element={<VaccineStockList />} />
               <Route path="vaccine-stocks/create" element={<VaccineStockCreate />} />
               <Route path="vaccine-stocks/edit/:id" element={<VaccineStockEdit />} />
-              
+
               {/* Vaccine Records */}
               <Route path="vaccine-records" element={<VaccineRecordList />} />
               <Route path="vaccine-records/create" element={<VaccineRecordCreate />} />
               <Route path="vaccine-records/edit/:id" element={<VaccineRecordEdit />} />
-              
+
+              // Veterinarians
+              <Route path="veterinarians" element={<VeterinariansList />} />
+              <Route path="veterinarians/:id" element={<VeterinarianDetail />} />
+              <Route path="veterinarians/edit/:id" element={<VeterinarianEdit />} />
+
+
+
               {/* Codes */}
               <Route path="codes" element={<CodesList />} />
               <Route path="codes/create" element={<CodesCreate />} />
               <Route path="codes/edit/:id" element={<CodesEdit />} />
-              
+
               {/* Default redirect */}
               <Route path="" element={<Navigate to="/dashboard" replace />} />
             </Route>
