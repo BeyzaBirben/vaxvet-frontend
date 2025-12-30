@@ -14,7 +14,6 @@ import {
   TableHead,
   TableRow,
   Chip,
-  CircularProgress,
   Alert,
 } from '@mui/material';
 import {
@@ -30,6 +29,8 @@ import { petsApi } from '../api/pets';
 import { vaccinesApi } from '../api/vaccines';
 import { vaccineRecordsApi } from '../api/vaccineRecords';
 import { vaccineStocksApi } from '../api/vaccineStocks';
+import { veterinariansApi } from '../api/veterinarians';
+
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -49,6 +50,10 @@ export default function Dashboard() {
     queryKey: ['vaccines'],
     queryFn: vaccinesApi.getAll,
   });
+  const { data: veterinarians } = useQuery({
+  queryKey: ['veterinarians'],
+  queryFn: veterinariansApi.getAll,
+});
 
   const { data: records } = useQuery({
     queryKey: ['vaccine-records'],
@@ -107,6 +112,13 @@ export default function Dashboard() {
       color: '#2e7d32',
       link: '/vaccines',
     },
+     {
+    title: 'Veterinarians',
+    value: veterinarians?.length || 0,
+    icon: <LocalHospitalIcon />,
+    color: '#8e24aa',
+    link: '/veterinarians',
+  },
     {
       title: 'Records',
       value: records?.length || 0,
@@ -114,6 +126,7 @@ export default function Dashboard() {
       color: '#ed6c02',
       link: '/vaccine-records',
     },
+    
   ];
 
   return (

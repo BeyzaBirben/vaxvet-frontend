@@ -30,6 +30,8 @@ import {
   Logout as LogoutIcon,
 } from '@mui/icons-material';
 import { useAuthStore } from '../../store/authStore';
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
+
 
 const drawerWidth = 240;
 
@@ -40,6 +42,7 @@ const menuItems = [
   { text: 'Vaccines', icon: <VaccinesIcon />, path: '/vaccines' },
   { text: 'Vaccine Stocks', icon: <InventoryIcon />, path: '/vaccine-stocks' },
   { text: 'Vaccine Records', icon: <LocalHospitalIcon />, path: '/vaccine-records' },
+  { text: 'Veterinarians', icon: <MedicalServicesIcon />, path: '/veterinarians' },
   { text: 'Codes', icon: <CodeIcon />, path: '/codes' },
 ];
 
