@@ -3,6 +3,7 @@ import { create } from 'zustand';
 interface User {
   id: string;
   userName: string;
+  role: string
 }
 
 interface AuthState {
@@ -31,7 +32,6 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 }));
 
-// LocalStorage'dan kullanıcıyı yükle
 const storedToken = localStorage.getItem('token');
 const storedUser = localStorage.getItem('user');
 

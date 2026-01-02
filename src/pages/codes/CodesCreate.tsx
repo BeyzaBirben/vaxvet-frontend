@@ -21,7 +21,7 @@ import type { CodeCreateDto } from '../../types/codes';
 
 export default function CodesCreate() {
   const navigate = useNavigate();
-  const [selectedCodeType, setSelectedCodeType] = useState('');
+  const [, setSelectedCodeType] = useState('');
 
   const {
     control,

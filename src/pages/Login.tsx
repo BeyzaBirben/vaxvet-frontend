@@ -42,6 +42,7 @@ export default function Login() {
         {
           id: response.userId,
           userName: response.userName,
+          role: response.role || 'VETERINARIAN',
         },
         response.token
       );

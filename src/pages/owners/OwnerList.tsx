@@ -57,7 +57,7 @@ export default function OwnerList() {
   });
 
   // Fetch owners with search
-  const { data: owners, isLoading, error, refetch } = useQuery({
+  const { data: owners, isLoading, error } = useQuery({
     queryKey: ['owners', activeSearch],
     queryFn: async () => {
       // If any search field is filled, use search endpoint

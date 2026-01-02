@@ -24,7 +24,7 @@ export default function CodesEdit() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const codeId = parseInt(id || '0');
-  const [selectedCodeType, setSelectedCodeType] = useState('');
+  const [, setSelectedCodeType] = useState('');
 
   const {
     control,

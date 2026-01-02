@@ -22,6 +22,7 @@ import { vaccineStocksApi } from '../../api/vaccineStocks';
 import { veterinariansApi } from '../../api/veterinarians';
 import type { VaccineRecordCreateDto } from '../../types/vaccine';
 
+
 export default function VaccineRecordCreate() {
   const navigate = useNavigate();
   const {
@@ -168,7 +169,7 @@ export default function VaccineRecordCreate() {
                     <Select {...field} label="Veterinarian">
                       <MenuItem value="">-- Select Veterinarian --</MenuItem>
                       {veterinarians && veterinarians.length > 0 ? (
-                        veterinarians.map((vet) => (
+                        veterinarians.map((vet: any) => (
                           <MenuItem key={vet.id} value={vet.id}>
                             {vet.firstName} {vet.lastName}
                           </MenuItem>

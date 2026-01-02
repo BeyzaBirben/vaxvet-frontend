@@ -51,6 +51,15 @@ export default function Layout() {
   const { user, logout } = useAuthStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const roleName = user?.role?.toLowerCase();
+
+
+  const filteredMenuItems = menuItems.filter((item) => {
+    if (roleName === 'veterinarian') {
+      return !['/veterinarians', '/codes'].includes(item.path);
+    }
+    return true;
+  });
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -83,7 +92,8 @@ export default function Layout() {
       </Toolbar>
       <Divider />
       <List>
-        {menuItems.map((item) => (
+        {/* menuItems yerine filteredMenuItems kullanıyoruz */}
+        {filteredMenuItems.map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton onClick={() => handleMenuClick(item.path)}>
               <ListItemIcon>{item.icon}</ListItemIcon>

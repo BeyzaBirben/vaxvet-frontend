@@ -32,7 +32,7 @@ export default function VaccineRecordEdit() {
     control,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: {  },
   } = useForm<VaccineRecordUpdateDto>();
 
   const { data: record, isLoading } = useQuery({
@@ -176,7 +176,7 @@ export default function VaccineRecordEdit() {
                     <InputLabel>Veterinarian</InputLabel>
                     <Select {...field} label="Veterinarian">
                       {veterinarians && veterinarians.length > 0 ? (
-                        veterinarians.map((vet) => (
+                        veterinarians.map((vet: any) => (
                           <MenuItem key={vet.id} value={vet.id}>
                             {vet.firstName} {vet.lastName}
                           </MenuItem>

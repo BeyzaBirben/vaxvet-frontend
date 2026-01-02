@@ -8,6 +8,7 @@ export interface LoginResponse {
   userName: string;
   token: string;
   expiresIn: number;
+  role: string;
 }
 
 export interface User {

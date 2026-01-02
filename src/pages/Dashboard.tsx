@@ -6,7 +6,7 @@ import {
   Typography,
   Card,
   CardContent,
-  Grid, 
+  Grid,
   Table,
   TableBody,
   TableCell,
@@ -30,12 +30,16 @@ import { vaccinesApi } from '../api/vaccines';
 import { vaccineRecordsApi } from '../api/vaccineRecords';
 import { vaccineStocksApi } from '../api/vaccineStocks';
 import { veterinariansApi } from '../api/veterinarians';
-
+import { useAuthStore } from '../store/authStore';
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
 
-  // Fetch all data
+  // 🔑 ROLE STRING
+  const roleName = user?.role?.toLowerCase();
+
+  // --- DATA ---
   const { data: owners } = useQuery({
     queryKey: ['owners'],
     queryFn: ownersApi.getAll,
@@ -50,10 +54,13 @@ export default function Dashboard() {
     queryKey: ['vaccines'],
     queryFn: vaccinesApi.getAll,
   });
+
+  // ❌ Veterinarian ise bu API çağrılmaz
   const { data: veterinarians } = useQuery({
-  queryKey: ['veterinarians'],
-  queryFn: veterinariansApi.getAll,
-});
+    queryKey: ['veterinarians'],
+    queryFn: veterinariansApi.getAll,
+    enabled: roleName !== 'veterinarian',
+  });
 
   const { data: records } = useQuery({
     queryKey: ['vaccine-records'],
@@ -65,31 +72,35 @@ export default function Dashboard() {
     queryFn: vaccineStocksApi.getAll,
   });
 
-  // Calculate upcoming vaccinations (next 30 days)
-  const upcomingVaccinations = records?.filter(record => {
-    if (!record.nextDueDate) return false;
-    const daysUntil = Math.floor(
-      (new Date(record.nextDueDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-    );
-    return daysUntil >= 0 && daysUntil <= 30;
-  }) || [];
+  // --- BUSINESS LOGIC ---
+  const upcomingVaccinations =
+    records?.filter(r => {
+      if (!r.nextDueDate) return false;
+      const days =
+        (new Date(r.nextDueDate).getTime() - Date.now()) /
+        (1000 * 60 * 60 * 24);
+      return days >= 0 && days <= 30;
+    }) || [];
 
-  // Calculate expiring stocks (next 30 days)
-  const expiringStocks = stocks?.filter(stock => {
-    const daysUntil = Math.floor(
-      (new Date(stock.expirationDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-    );
-    return daysUntil >= 0 && daysUntil <= 30;
-  }) || [];
+  const expiringStocks =
+    stocks?.filter(s => {
+      const days =
+        (new Date(s.expirationDate).getTime() - Date.now()) /
+        (1000 * 60 * 60 * 24);
+      return days >= 0 && days <= 30;
+    }) || [];
 
-  // Recent records (last 7 days)
-  const recentRecords = records?.filter(record => {
-    const daysSince = Math.floor(
-      (new Date().getTime() - new Date(record.vaccinationDate).getTime()) / (1000 * 60 * 60 * 24)
-    );
-    return daysSince <= 7;
-  }).slice(0, 5) || [];
+  const recentRecords =
+    records
+      ?.filter(r => {
+        const days =
+          (Date.now() - new Date(r.vaccinationDate).getTime()) /
+          (1000 * 60 * 60 * 24);
+        return days <= 7;
+      })
+      .slice(0, 5) || [];
 
+  // --- STATS CARDS ---
   const stats = [
     {
       title: 'Total Owners',
@@ -112,13 +123,18 @@ export default function Dashboard() {
       color: '#2e7d32',
       link: '/vaccines',
     },
-     {
-    title: 'Veterinarians',
-    value: veterinarians?.length || 0,
-    icon: <LocalHospitalIcon />,
-    color: '#8e24aa',
-    link: '/veterinarians',
-  },
+
+    // 🔒 SADECE ADMIN
+    roleName !== 'veterinarian'
+      ? {
+        title: 'Veterinarians',
+        value: veterinarians?.length || 0,
+        icon: <LocalHospitalIcon />,
+        color: '#8e24aa',
+        link: '/veterinarians',
+      }
+      : null,
+
     {
       title: 'Records',
       value: records?.length || 0,
@@ -126,35 +142,33 @@ export default function Dashboard() {
       color: '#ed6c02',
       link: '/vaccine-records',
     },
-    
-  ];
+  ].filter(Boolean);
 
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
         Dashboard
       </Typography>
+
       <Typography variant="body1" color="text.secondary" mb={3}>
         Welcome to VAXVET Management System
       </Typography>
 
-      {/* Statistics Cards */}
+      {/* ===== STAT CARDS ===== */}
       <Grid container spacing={3} mb={3}>
-        {stats.map((stat, index) => (
-          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
+        {stats.map((stat: any, index) => (
+          <Grid key={index} size={{ xs: 12, sm: 6, md: 3 }}>
             <Card
               sx={{ cursor: 'pointer', '&:hover': { boxShadow: 6 } }}
               onClick={() => navigate(stat.link)}
             >
               <CardContent>
-                <Box display="flex" alignItems="center" justifyContent="space-between">
+                <Box display="flex" justifyContent="space-between">
                   <Box>
                     <Typography color="text.secondary" variant="body2">
                       {stat.title}
                     </Typography>
-                    <Typography variant="h4" mt={1}>
-                      {stat.value}
-                    </Typography>
+                    <Typography variant="h4">{stat.value}</Typography>
                   </Box>
                   <Box
                     sx={{
@@ -163,7 +177,6 @@ export default function Dashboard() {
                       p: 1.5,
                       color: 'white',
                       display: 'flex',
-                      justifyContent: 'center',
                       alignItems: 'center',
                     }}
                   >
@@ -176,9 +189,9 @@ export default function Dashboard() {
         ))}
       </Grid>
 
+      {/* ===== TABLES ===== */}
       <Grid container spacing={3}>
         {/* Upcoming Vaccinations */}
-        {/* item yerine size */}
         <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3 }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -201,14 +214,12 @@ export default function Dashboard() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {upcomingVaccinations.slice(0, 5).map((record) => (
-                      <TableRow key={record.id} hover>
-                        <TableCell>{record.pet?.name || '-'}</TableCell>
-                        <TableCell>{record.vaccine?.name || '-'}</TableCell>
+                    {upcomingVaccinations.slice(0, 5).map(r => (
+                      <TableRow key={r.id}>
+                        <TableCell>{r.pet?.name || '-'}</TableCell>
+                        <TableCell>{r.vaccine?.name || '-'}</TableCell>
                         <TableCell>
-                          {record.nextDueDate
-                            ? new Date(record.nextDueDate).toLocaleDateString()
-                            : '-'}
+                          {new Date(r.nextDueDate!).toLocaleDateString()}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -216,13 +227,14 @@ export default function Dashboard() {
                 </Table>
               </TableContainer>
             ) : (
-              <Alert severity="success">No upcoming vaccinations in the next 30 days</Alert>
+              <Alert severity="success">
+                No upcoming vaccinations in the next 30 days
+              </Alert>
             )}
           </Paper>
         </Grid>
 
         {/* Expiring Stocks */}
-        {/* item yerine size */}
         <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3 }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -245,13 +257,15 @@ export default function Dashboard() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {expiringStocks.slice(0, 5).map((stock) => (
-                      <TableRow key={stock.id} hover>
-                        <TableCell>{stock.vaccine?.name || '-'}</TableCell>
-                        <TableCell>{stock.serialId}</TableCell>
+                    {expiringStocks.slice(0, 5).map(s => (
+                      <TableRow key={s.id}>
+                        <TableCell>{s.vaccine?.name}</TableCell>
+                        <TableCell>{s.serialId}</TableCell>
                         <TableCell>
                           <Chip
-                            label={new Date(stock.expirationDate).toLocaleDateString()}
+                            label={new Date(
+                              s.expirationDate
+                            ).toLocaleDateString()}
                             color="warning"
                             size="small"
                           />
@@ -262,16 +276,15 @@ export default function Dashboard() {
                 </Table>
               </TableContainer>
             ) : (
-              <Alert severity="success">No stocks expiring in the next 30 days</Alert>
+              <Alert severity="success">No stocks expiring soon</Alert>
             )}
           </Paper>
         </Grid>
 
-        {/* Recent Activity */}
-        {/* item yerine size */}
+        {/* Recent Records */}
         <Grid size={{ xs: 12 }}>
           <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" mb={2}>
               Recent Vaccine Records (Last 7 Days)
             </Typography>
 
@@ -288,21 +301,21 @@ export default function Dashboard() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {recentRecords.map((record) => (
-                      <TableRow key={record.id} hover>
+                    {recentRecords.map(r => (
+                      <TableRow key={r.id}>
                         <TableCell>
-                          {new Date(record.vaccinationDate).toLocaleDateString()}
+                          {new Date(r.vaccinationDate).toLocaleDateString()}
                         </TableCell>
-                        <TableCell>{record.pet?.name || '-'}</TableCell>
+                        <TableCell>{r.pet?.name}</TableCell>
                         <TableCell>
-                          {record.pet?.owner
-                            ? `${record.pet.owner.firstName} ${record.pet.owner.lastName}`
+                          {r.pet?.owner
+                            ? `${r.pet.owner.firstName} ${r.pet.owner.lastName}`
                             : '-'}
                         </TableCell>
-                        <TableCell>{record.vaccine?.name || '-'}</TableCell>
+                        <TableCell>{r.vaccine?.name}</TableCell>
                         <TableCell>
-                          {record.veterinarian
-                            ? `${record.veterinarian.firstName} ${record.veterinarian.lastName}`
+                          {r.veterinarian
+                            ? `${r.veterinarian.firstName} ${r.veterinarian.lastName}`
                             : '-'}
                         </TableCell>
                       </TableRow>
@@ -311,7 +324,7 @@ export default function Dashboard() {
                 </Table>
               </TableContainer>
             ) : (
-              <Alert severity="info">No vaccine records in the last 7 days</Alert>
+              <Alert severity="info">No recent vaccine records</Alert>
             )}
           </Paper>
         </Grid>

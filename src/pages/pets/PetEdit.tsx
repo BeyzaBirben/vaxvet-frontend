@@ -33,7 +33,6 @@ export default function PetEdit() {
     handleSubmit,
     reset,
     watch,
-    setValue,
     formState: { errors },
   } = useForm<PetUpdateDto>();
 

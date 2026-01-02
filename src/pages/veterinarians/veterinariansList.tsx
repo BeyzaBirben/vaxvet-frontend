@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { veterinariansApi } from '../../api/veterinarians';
 import type { VeterinarianSearchDto, Veterinarian } from '../../api/veterinarians';
-
+import { useAuthStore } from '../../store/authStore';
 import {
     Box,
     Typography,
@@ -31,7 +31,15 @@ import {
 export default function VeterinariansList() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const { user } = useAuthStore();
 
+    useEffect(() => {
+    // Eğer kullanıcı veterinerse burayı görmeye yetkisi yoktur
+    if (user?.role === 'Veterinarian') {
+      navigate('/dashboard'); // Onu kibarca dashboard'a geri atıyoruz
+    }
+  }, [user, navigate]);
+  if (user?.role === 'Veterinarian') return null;
     /* Search Criteria State */
     const [searchCriteria, setSearchCriteria] = useState<VeterinarianSearchDto>({
         userName: '',

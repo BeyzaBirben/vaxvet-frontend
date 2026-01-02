@@ -19,7 +19,7 @@ import { Save as SaveIcon, Cancel as CancelIcon } from '@mui/icons-material';
 import { petsApi } from '../../api/pets';
 import { ownersApi } from '../../api/owners';
 import { codesApi } from '../../api/codes';
-import type { PetCreateDto, SelectOption } from '../../types/pet';
+import type { PetCreateDto,  } from '../../types/pet';
 
 export default function PetCreate() {
   const navigate = useNavigate();
