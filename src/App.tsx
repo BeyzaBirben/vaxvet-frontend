@@ -75,10 +75,14 @@ function App() {
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
       .withUrl(
-        "https://vaxvet-backend-api-d3hwe8cpg8ezbmbg.italynorth-01.azurewebsites.net/hubs/notifications"
+        "https://vaxvet-backend-api-d3hwe8cpg8ezbmbg.italynorth-01.azurewebsites.net/hubs/notifications",
+        {
+          withCredentials: true
+        }
       )
       .withAutomaticReconnect()
       .build();
+
 
     connection.on("ReceiveNotification", (message: string) => {
       alert(message);
