@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, createTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
+import * as signalR from "@microsoft/signalr";
+import { useEffect } from "react";
 
 // Auth & Layout
 import Login from './pages/Login';
@@ -70,6 +72,27 @@ const theme = createTheme({
 });
 
 function App() {
+  useEffect(() => {
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl(
+        "https://vaxvet-backend-api-d3hwe8cpg8ezbmbg.italynorth-01.azurewebsites.net/hubs/notifications"
+      )
+      .withAutomaticReconnect()
+      .build();
+
+    connection.on("ReceiveNotification", (message: string) => {
+      alert(message);
+    });
+
+    connection
+      .start()
+      .then(() => console.log("✅ SignalR connected"))
+      .catch(err => console.error("❌ SignalR error", err));
+
+    return () => {
+      connection.stop();
+    };
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
