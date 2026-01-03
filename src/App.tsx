@@ -77,7 +77,7 @@ function App() {
       .withUrl(
         "https://vaxvet-backend-api-d3hwe8cpg8ezbmbg.italynorth-01.azurewebsites.net/hubs/notifications",
         {
-          withCredentials: true
+          withCredentials: false 
         }
       )
       .withAutomaticReconnect()
