@@ -87,7 +87,7 @@ function App() {
     connection
       .start()
       .then(() => console.log("✅ SignalR connected"))
-      .catch(err => console.error("❌ SignalR error", err));
+      .catch((err: Error) => console.error("❌ SignalR error", err));
 
     return () => {
       connection.stop();
