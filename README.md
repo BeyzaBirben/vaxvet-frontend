@@ -45,21 +45,24 @@ VAXVET Frontend is a single-page application (SPA) that connects to the [VAXVET 
 
 ---
 
-## 📸 Screenshots
+<details>
+  <summary><b>📸 Screenshots (click to expand)</b></summary>
 
-| Page | Preview |
-|------|---------|
-| Login | <img src="./screenshots/01-login.png" width="400" /> |
-| Register | <img src="./screenshots/02-register.png" width="400" /> |
-| Dashboard | <img src="./screenshots/03-dashboard.png" width="400" /> |
-| Owners | <img src="./screenshots/04-owners.png" width="400" /> |
-| Pets | <img src="./screenshots/05-pets.png" width="400" /> |
-| Vaccines | <img src="./screenshots/06-vaccines.png" width="400" /> |
-| Vaccine Stocks | <img src="./screenshots/07-vaccinestocks.png" width="400" /> |
-| Vaccine Records | <img src="./screenshots/08-vaccinerecords.png" width="400" /> |
-| Veterinarians | <img src="./screenshots/09-veterinarians.png" width="400" /> |
+  <br/>
 
----
+  | Page | Preview |
+  |------|---------|
+  | Login | <img src="./screenshots/01-login.png" width="400" /> |
+  | Register | <img src="./screenshots/02-register.png" width="400" /> |
+  | Dashboard | <img src="./screenshots/03-dashboard.png" width="400" /> |
+  | Owners | <img src="./screenshots/04-owners.png" width="400" /> |
+  | Pets | <img src="./screenshots/05-pets.png" width="400" /> |
+  | Vaccines | <img src="./screenshots/06-vaccines.png" width="400" /> |
+  | Vaccine Stocks | <img src="./screenshots/07-vaccinestocks.png" width="400" /> |
+  | Vaccine Records | <img src="./screenshots/08-vaccinerecords.png" width="400" /> |
+  | Veterinarians | <img src="./screenshots/09-veterinarians.png" width="400" /> |
+
+</details>
 
 ---
 
